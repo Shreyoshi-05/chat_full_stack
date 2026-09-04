@@ -1,0 +1,181 @@
+.signin_page {
+  width: 100%;
+  height: 100%;
+  min-height: 80vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+}
+
+/* left + right sections */
+.sn_container {
+  width: 50%;
+  min-height: 350px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 40px;
+}
+
+/* middle divider */
+.sn_container:first-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sn_container h2 {
+  color: white;
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* inputs */
+.sn_container input {
+  width: 100%;
+  max-width: 300px;
+
+  padding: 13px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+
+  background: rgba(3, 16, 31, 0.48);
+
+  color: white;
+  outline: none;
+
+  font-size: 14px;
+
+  transition: 0.3s;
+}
+
+.sn_container input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sn_container input:focus {
+  border-color: rgba(47, 137, 255, 0.8);
+  background: rgba(3, 16, 31, 0.65);
+}
+
+/* button */
+.sn_container button {
+  width: 100%;
+  max-width: 300px;
+
+  padding: 12px;
+
+  border: none;
+  border-radius: 4px;
+
+  background: #1477d4;
+
+  color: white;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.sn_container button:hover {
+  background: #2688e5;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 850px) {
+
+  .signin_page {
+    padding: 25px;
+  }
+
+  .sn_container {
+    padding: 25px;
+  }
+
+  .sn_container input,
+  .sn_container button {
+    max-width: 260px;
+  }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+  .signin_page {
+    flex-direction: column;
+
+    height: auto;
+    min-height: 100%;
+
+    padding: 25px 15px;
+  }
+
+  .sn_container {
+    width: 100%;
+    min-height: auto;
+
+    padding: 35px 20px;
+  }
+
+  /* remove vertical line */
+  .sn_container:first-child {
+    border-right: none;
+
+    /* horizontal divider instead */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .sn_container input,
+  .sn_container button {
+    max-width: 100%;
+  }
+
+  .sn_container h2 {
+    font-size: 20px;
+  }
+}
+
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 400px) {
+
+  .signin_page {
+    padding: 15px 10px;
+  }
+
+  .sn_container {
+    padding: 25px 10px;
+  }
+
+  .sn_container h2 {
+    font-size: 18px;
+  }
+
+  .sn_container input {
+    padding: 11px 12px;
+  }
+
+  .sn_container button {
+    padding: 11px;
+  }
+}
