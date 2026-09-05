@@ -1,0 +1,560 @@
+.mid_home {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  color: white;
+
+  overflow: hidden;
+}
+
+
+/* =========================
+   TOP
+========================= */
+
+.mid_top {
+  width: 100%;
+  height: 75px;
+
+  padding: 10px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  flex-shrink: 0;
+}
+
+
+/* USER */
+
+.mid_user {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  min-width: 0;
+}
+
+
+.mid_user img {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  flex-shrink: 0;
+}
+
+
+.mid_user_info {
+  min-width: 0;
+}
+
+
+.mid_user_info h3 {
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  margin: 0 0 4px;
+}
+
+
+.mid_user_info p {
+  color: rgba(255, 255, 255, 0.65);
+
+  font-size: 11px;
+
+  margin: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* HEADER ICONS */
+
+.mid_icons {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.mid_icons button {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 15px;
+}
+
+
+.mid_icons button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+
+/* =========================
+   MIDDLE MESSAGE PORTION
+========================= */
+
+.mid_messages {
+  width: 100%;
+
+  flex: 1;
+
+  padding: 18px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+/* scrollbar */
+
+.mid_messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mid_messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+
+  border-radius: 10px;
+}
+
+
+/* =========================
+   BOTTOM
+========================= */
+
+.mid_bottom {
+  width: 100%;
+  min-height: 65px;
+
+  padding: 10px 15px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  flex-shrink: 0;
+}
+
+
+/* LEFT ICONS */
+
+.bottom_icons {
+  display: flex;
+
+  gap: 5px;
+}
+
+
+.bottom_icons button {
+  border: none;
+
+  background: transparent;
+
+  color: white;
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  padding: 5px;
+}
+
+
+/* INPUT CONTAINER */
+
+.message_input {
+  flex: 1;
+
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+
+  background: rgba(3, 16, 30, 0.55);
+
+  border-radius: 7px;
+
+  padding: 0 8px 0 14px;
+}
+
+
+.message_input input {
+  flex: 1;
+
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: white;
+
+  font-size: 13px;
+}
+
+
+.message_input input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+.emoji_btn {
+  border: none;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  font-size: 17px;
+}
+
+
+/* SEND */
+
+.send_btn {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 7px;
+
+  background: #2477d4;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 17px;
+}
+
+
+.send_btn:hover {
+  background: #358be9;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 950px) {
+
+  .mid_top {
+    padding: 10px 14px;
+  }
+
+  .mid_messages {
+    padding: 14px;
+  }
+
+  .mid_bottom {
+    padding: 9px 12px;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+  .mid_top {
+    height: 65px;
+
+    padding: 8px 10px;
+  }
+
+  .mid_user img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .mid_user_info h3 {
+    font-size: 14px;
+  }
+
+  .mid_user_info p {
+    display: none;
+  }
+
+  .mid_icons {
+    gap: 3px;
+  }
+
+  .mid_icons button {
+    width: 28px;
+    height: 28px;
+
+    font-size: 13px;
+  }
+
+  .mid_messages {
+    padding: 10px;
+  }
+
+  .mid_bottom {
+    min-height: 60px;
+
+    padding: 8px;
+
+    gap: 5px;
+  }
+
+  /* Only show one attachment icon on small screen */
+
+  .bottom_icons button:nth-child(2),
+  .bottom_icons button:nth-child(3) {
+    display: none;
+  }
+
+  .message_input {
+    height: 40px;
+
+    padding-left: 10px;
+  }
+
+  .send_btn {
+    width: 40px;
+    height: 40px;
+  }
+
+}
+
+
+/* =========================
+   VERY SMALL MOBILE
+========================= */
+
+@media (max-width: 400px) {
+
+  .mid_icons button:nth-child(2) {
+    display: none;
+  }
+
+  .mid_user img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .mid_bottom {
+    padding: 6px;
+  }
+
+  .message_input input {
+    font-size: 12px;
+  }
+
+}
+
+/* =========================
+   MESSAGE AREA
+========================= */
+
+.mid_messages {
+  width: 100%;
+
+  flex: 1;
+
+  padding:12px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+/* EACH MESSAGE ROW */
+
+.message_row {
+  width: 100%;
+
+  display: flex;
+}
+
+
+/* =========================
+   RECEIVED MESSAGE - LEFT
+========================= */
+
+.message_row.received {
+  justify-content: flex-start;
+}
+
+
+/* =========================
+   SENT MESSAGE - RIGHT
+========================= */
+
+.message_row.sent {
+  justify-content: flex-end;
+}
+
+
+/* =========================
+   MESSAGE BUBBLE
+========================= */
+
+.message_bubble {
+  max-width: 65%;
+
+  padding: 10px 13px;
+
+  border-radius: 15px;
+}
+
+
+/* RECEIVED BUBBLE */
+
+.received .message_bubble {
+  background: rgba(8, 29, 50, 0.8);
+
+  border-bottom-left-radius: 2px;
+}
+
+
+/* SENT BUBBLE */
+
+.sent .message_bubble {
+  background: #376bb4;
+
+  border-bottom-right-radius: 2px;
+}
+
+
+/* MESSAGE TEXT */
+
+.message_bubble p {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+  word-break: break-word;
+}
+
+
+/* TIME */
+
+.message_time {
+  display: block;
+
+  margin-top: 2px;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 9px;
+}
+
+
+/* SENT TIME ON RIGHT */
+
+.sent .message_time {
+  text-align: right;
+}
+
+
+/* RECEIVED TIME ON LEFT */
+
+.received .message_time {
+  text-align: left;
+}
+
+
+/* SCROLLBAR */
+
+.mid_messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mid_messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+
+  border-radius: 10px;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+
+  .mid_messages {
+    padding: 15px;
+  }
+
+  .message_bubble {
+    max-width: 72%;
+  }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+  .mid_messages {
+    padding: 12px 10px;
+
+    gap: 10px;
+  }
+
+  .message_bubble {
+    max-width: 82%;
+
+    padding: 9px 11px;
+  }
+
+  .message_bubble p {
+    font-size: 12px;
+  }
+}

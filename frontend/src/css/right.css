@@ -1,0 +1,301 @@
+.right_home {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  color: #ffffff;
+
+  background: rgba(5, 22, 40, 0.14);
+
+  overflow-y: auto;
+}
+
+
+/* PROFILE SECTION */
+
+.right_profile {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  padding: 28px 20px 22px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+.right_profile_img {
+  width: 80px;
+  height: 80px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  margin-bottom: 14px;
+}
+
+
+.right_profile h2 {
+  color: #ffffff;
+
+  font-size: 20px;
+
+  margin-bottom: 10px;
+
+  font-weight: 600;
+}
+
+
+.right_profile p {
+  color: rgba(255, 255, 255, 0.8);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* OPTIONS */
+
+.right_options {
+  width: 100%;
+
+  padding: 10px 25px;
+}
+
+
+.option_item {
+  width: 100%;
+
+  min-height: 48px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.option_item span {
+  color: #ffffff;
+}
+
+
+/* SHARED ITEMS */
+
+.shared_list {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding: 8px 0 14px;
+}
+
+
+.shared_item {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.shared_item img {
+  width: 34px;
+  height: 34px;
+
+  object-fit: cover;
+
+  border-radius: 5px;
+
+  flex-shrink: 0;
+}
+
+
+.shared_item span {
+  flex: 1;
+
+  color: rgba(255, 255, 255, 0.82);
+
+  font-size: 11px;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+.shared_item button {
+  width: 28px;
+  height: 28px;
+
+  border: none;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: #ffffff;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+}
+
+
+.shared_item button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+
+/* ACTION BUTTONS */
+
+.right_actions {
+  margin-top: auto;
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+
+  padding: 18px 25px 25px;
+}
+
+
+.right_actions button {
+  width: 100%;
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 4px;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  transition: 0.2s ease;
+}
+
+
+.block_btn {
+  background: rgba(180, 50, 80, 0.7);
+}
+
+
+.block_btn:hover {
+  background: rgba(200, 55, 90, 0.9);
+}
+
+
+.logout_btn {
+  background: #1477d4;
+}
+
+
+.logout_btn:hover {
+  background: #2589e8;
+}
+
+
+/* SCROLLBAR */
+
+.right_home::-webkit-scrollbar {
+  width: 4px;
+}
+
+
+.right_home::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+
+  border-radius: 10px;
+}
+
+
+/* TABLET */
+
+@media (max-width: 950px) {
+
+  .right_profile {
+    padding: 22px 14px 18px;
+  }
+
+  .right_profile_img {
+    width: 68px;
+    height: 68px;
+  }
+
+  .right_profile h2 {
+    font-size: 17px;
+  }
+
+  .right_profile p {
+    font-size: 12px;
+  }
+
+  .right_options {
+    padding: 8px 12px;
+  }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+  .right_home {
+    width: 100%;
+    height: 100%;
+  }
+
+  .right_profile {
+    padding: 20px 15px;
+  }
+
+  .right_profile_img {
+    width: 72px;
+    height: 72px;
+  }
+
+  .right_profile h2 {
+    font-size: 18px;
+  }
+
+  .option_item {
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .shared_item img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .right_actions {
+    padding: 15px;
+  }
+
+}
