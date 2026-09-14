@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../css/signin.css";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [signUpinput, setSignupInput] = useState({
@@ -49,12 +49,25 @@ const Signin = () => {
       });
 
       const data = await ans.json();
-      toast.success(data.message);
+
+      if(data.success){
+        toast.success(data.message);
+      }else{
+        toast.error(data.message);
+      }
+      
+      localStorage.setItem("chatuser", JSON.stringify(data));
+      console.log(data);
+
       setSigninInput(() => ({
         email: "",
         pass: "",
       }));
-      nav("/");
+      
+      if(data.success){
+        nav("/home");
+      }
+
     } catch (error) {
       return toast.error(error.message);
     }
@@ -83,6 +96,9 @@ const Signin = () => {
           }
           required
         />
+        <span>
+          <Link to={"/forgotpass"}>Forgot password?</Link>
+        </span>
         <button type="submit">Sign In</button>
       </form>
 

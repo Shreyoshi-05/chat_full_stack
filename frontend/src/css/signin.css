@@ -23,6 +23,29 @@
   gap: 14px;
 
   padding: 40px;
+
+
+  span{
+   width: 100%;
+  max-width: 300px;
+
+  /* padding: 13px 15px; */
+  color: white;
+  outline: none;
+
+  font-size: 13px;
+  display: flex;
+  align-items: end;
+  justify-content: end;
+
+
+  a{
+    text-decoration: none;
+    color: aliceblue;
+    cursor: pointer;
+  }
+
+  }
 }
 
 /* middle divider */

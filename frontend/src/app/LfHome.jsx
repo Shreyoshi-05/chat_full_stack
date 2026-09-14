@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../css/left.css"
-
+import "../css/left.css";
+import { useEffect } from "react";
 
 const users = [
   {
@@ -41,19 +41,47 @@ const users = [
   },
 ];
 
-const LfHome = () => {
+const LfHome = ({setFriendsId}) => {
   const [search, setSearch] = useState("");
+  const [allusers, setAllUsers] = useState([]);
 
   const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
+    user.name.toLowerCase().includes(search.toLowerCase()),
   );
+
+  async function getAllUser(userId) {
+    // console.log(userId);
+    try {
+      const ans = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/all/${userId}`);
+      const data = await ans.json();
+      // console.log(data.data);
+      setAllUsers(data.data);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+
+  // console.log(userId)
+
+  useEffect(() => {
+    const chatuser = JSON.parse(localStorage.getItem("chatuser"));
+    console.log(chatuser.data.id);
+
+    const userId = chatuser?.data?.id;
+    if (userId) {
+      getAllUser(userId);
+    }
+  }, []);
+
+  function handleFriendsId(id){
+    console.log(id);
+  }
+
 
   return (
     <div className="left_home">
-
       {/* HEADER */}
       <div className="left_header">
-
         <div className="current_user">
           <img src="/dp.jpg" alt="profile" />
 
@@ -65,13 +93,10 @@ const LfHome = () => {
           <button>▣</button>
           <button>✎</button>
         </div>
-
       </div>
-
 
       {/* SEARCH */}
       <div className="search_section">
-
         <div className="search_box">
           <span className="search_icon">⌕</span>
 
@@ -83,36 +108,26 @@ const LfHome = () => {
           />
         </div>
 
-        <button className="add_chat">
-          +
-        </button>
-
+        <button className="add_chat">+</button>
       </div>
-
 
       {/* CHAT USERS */}
       <div className="chat_list">
-
-        {filteredUsers.map((user) => (
-          <div className="chat_user" key={user.id}>
-
-            <img
-              src={user.image}
-              alt={user.name}
-              className="chat_avatar"
-            />
+        {allusers.map((user) => (
+          <div
+            className="chat_user"
+            key={user.id}
+            onClick={() => setFriendsId(user.otherUserId)}
+          >
+            <img src={"/dp3.jpg"} alt={user.name} className="chat_avatar" />
 
             <div className="chat_user_info">
-
               <h4>{user.name}</h4>
 
-              <p>{user.message}</p>
-
+              <p>{user.chats}</p>
             </div>
-
           </div>
         ))}
-
       </div>
 
     </div>

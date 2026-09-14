@@ -2,7 +2,7 @@ import React from "react";
 import "../css/right.css"
 
 
-const RiHome = () => {
+const RiHome = ({friendsId}) => {
   return (
     <div className="right_home">
 
