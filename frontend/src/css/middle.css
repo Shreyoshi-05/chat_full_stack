@@ -497,6 +497,8 @@
 
 .sent .message_time {
   text-align: right;
+  font-size: 0.6rem;
+  font-weight: 700;
 }
 
 
@@ -504,6 +506,8 @@
 
 .received .message_time {
   text-align: left;
+  font-size: 0.6rem;
+  font-weight: 700;
 }
 
 

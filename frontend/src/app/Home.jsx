@@ -19,6 +19,18 @@ const Home = () => {
     }
   }, []);
 
+  // useEffect(()=>{
+  //   const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_BACKEND_URL);
+  //   ws.onopen = () => {
+  //     console.log("connected");
+
+  //     ws.send(JSON.stringify({
+  //       type:"register",
+  //       userId
+  //     }))
+  //   }
+  // },[userId]);
+
   // console.log(userId,friendsId)
 
   return (
