@@ -3,6 +3,7 @@ import "../css/middle.css";
 import { messages } from "../assets/message";
 import { useEffect } from "react";
 import { useRef } from "react";
+import { io } from "socket.io-client";
 
 const MidHome = ({ userId, friendsId }) => {
   const [text, setText] = useState("");
@@ -11,34 +12,6 @@ const MidHome = ({ userId, friendsId }) => {
 
   async function handelSend() {
     try {
-      // const ans = await fetch(
-      //   `${import.meta.env.VITE_BACKEND_URL}/user/message`,
-      //   {
-      //     method: "post",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       senderId: userId,
-      //       receiverId: friendsId,
-      //       text,
-      //     }),
-      //   },
-      // );
-      // const data = await ans.json();
-      // // console.log(data);
-
-      // if(data.success){
-      //   getAllChats(userId, friendsId);
-      // }
-      // console.log(ws);
-
-      console.log("CURRENT STATE:", ws.current?.readyState);
-      console.log("sender:", userId);
-      console.log("receiver:", friendsId);
-
-      if (ws.current?.readyState !== WebSocket.OPEN) {
-        console.log("WebSocket is not connected");
-        return;
-      }
 
       const obj = {
         type: "message",
@@ -49,7 +22,10 @@ const MidHome = ({ userId, friendsId }) => {
 
       console.log("SENDING:", obj);
 
-      ws.current.send(JSON.stringify(obj));
+      // ws.current.send(JSON.stringify(obj));
+      ws.current.emit("sendMessage", obj);
+
+      setText("");
     } catch (error) {
       console.log(error.message);
     }
@@ -67,76 +43,62 @@ const MidHome = ({ userId, friendsId }) => {
       console.log(error.message);
     }
   }
+  console.log(chats);
 
   useEffect(() => {
     if (!userId || !friendsId) return;
     getAllChats(userId, friendsId);
   }, [userId, friendsId]);
 
-
   useEffect(() => {
-    const socket = new WebSocket(import.meta.env.VITE_WEBSOCKET_BACKEND_URL);
 
-    ws.current = socket;
+  if (!userId) return;
 
-    socket.onopen = () => {
-      // console.log("WEBSOCKET OPEN:", socket.readyState);
+  const socket = io(
+    import.meta.env.VITE_WEBSOCKET_BACKEND_URL
+  );
 
-      socket.send(
-        JSON.stringify({
-          type: "register",
-          userId,
-        }),
-      );
+  ws.current = socket;
+
+  socket.on("connect", () => {
+    console.log("Socket.IO connected");
+    socket.emit("register", userId);
+  });
+
+  socket.on("receiveMessage", (newMessage) => {
+    const chat = {
+      ...newMessage,
+      type:
+        Number(newMessage.senderId) === Number(userId)
+          ? "sent"
+          : "received",
     };
 
-    socket.onclose = (event) => {
-      console.log("WEBSOCKET CLOSED");
-      // console.log("readyState:", socket.readyState);
-      // console.log("code:", event.code);
-      // console.log("reason:", event.reason);
-    };
+    setChats((previousChats) => [
+      ...previousChats,
+      chat
+    ]);
 
-    socket.onerror = (error) => {
-      console.log("WEBSOCKET ERROR:", error);
-    };
+  });
 
-    socket.onmessage = (event) => {
-      const response = JSON.parse(event.data);
-      if (response.type === "message") {
-        const newMessage = response.data;
+  socket.on("disconnect", () => {
+    console.log("Socket.IO disconnected");
+  });
 
-        const chat = {
-          ...newMessage,
-          type:
-            Number(newMessage.senderId) === Number(userId)
-              ? "sent"
-              : "received",
-        };
+  return () => {
+    socket.disconnect();
+  };
 
-        setChats((previousChats) => [...previousChats, chat]);
-      }
-    };
+}, [userId]);
+  
 
-    return () => {
-      console.log("MidHome cleanup");
-
-      if (
-        socket.readyState === WebSocket.OPEN ||
-        socket.readyState === WebSocket.CONNECTING
-      ) {
-        socket.close();
-      }
-    };
-  }, [userId]);
-
-  function getTime(time){
-    if(!time) return;
+  function getTime(time) {
+    if (!time) return;
 
     const date = new Date(time);
-    const tt = date.toLocaleTimeString([],{
+    const tt = date.toLocaleTimeString([], {
       hour: "2-digit",
-      minute:"2-digit"
+      minute: "2-digit",
     });
     return tt;
   }
@@ -169,7 +131,7 @@ const MidHome = ({ userId, friendsId }) => {
               <div className="message_bubble">
                 <p>{message.message}</p>
 
-                <span className="message_time">{getTime(message.time)}</span>
+                <span className="message_time">{getTime(message.time || message.createdAt)}</span>
               </div>
             </div>
           ))}
