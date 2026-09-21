@@ -41,13 +41,11 @@ const users = [
   },
 ];
 
-const LfHome = ({setFriendsId}) => {
+const LfHome = ({userId,userDeatils,setFriendsId}) => {
   const [search, setSearch] = useState("");
   const [allusers, setAllUsers] = useState([]);
+  
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase()),
-  );
 
   async function getAllUser(userId) {
     // console.log(userId);
@@ -57,25 +55,17 @@ const LfHome = ({setFriendsId}) => {
       // console.log(data.data);
       setAllUsers(data.data);
     } catch (error) {
-      toast.error(error.message);
+      console.log(error.message);
     }
   }
 
-  // console.log(userId)
+  
+
+  console.log(userDeatils)
 
   useEffect(() => {
-    const chatuser = JSON.parse(localStorage.getItem("chatuser"));
-    console.log(chatuser.data.id);
-
-    const userId = chatuser?.data?.id;
-    if (userId) {
-      getAllUser(userId);
-    }
+    getAllUser(userId);
   }, []);
-
-  function handleFriendsId(id){
-    console.log(id);
-  }
 
 
   return (
@@ -85,7 +75,7 @@ const LfHome = ({setFriendsId}) => {
         <div className="current_user">
           <img src="/dp.jpg" alt="profile" />
 
-          <h3>John Smith</h3>
+          <h3>{userDeatils?.name}</h3>
         </div>
 
         <div className="header_actions">

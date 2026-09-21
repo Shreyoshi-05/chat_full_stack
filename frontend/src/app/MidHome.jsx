@@ -8,6 +8,8 @@ import { io } from "socket.io-client";
 const MidHome = ({ userId, friendsId }) => {
   const [text, setText] = useState("");
   const [chats, setChats] = useState([]);
+  const [friendsDetails ,setFriendsDetails] = useState();
+
   const ws = useRef(null);
 
   async function handelSend() {
@@ -43,11 +45,24 @@ const MidHome = ({ userId, friendsId }) => {
       console.log(error.message);
     }
   }
-  console.log(chats);
+  // console.log(friendsDetails);
+
+  async function getFriendsDeatils(fId) {
+    try {
+      const ans = await fetch(`${import.meta.env.VITE_BACKEND_URL}/details/${fId}`);
+      const data = await ans.json();
+      // console.log(data.data);
+      setFriendsDetails(data.data);
+
+    } catch (error) {
+      console.log(error.message);
+    }
+  } 
 
   useEffect(() => {
     if (!userId || !friendsId) return;
     getAllChats(userId, friendsId);
+    getFriendsDeatils(friendsId);
   }, [userId, friendsId]);
 
   useEffect(() => {
@@ -111,7 +126,7 @@ const MidHome = ({ userId, friendsId }) => {
           <img src="/dp3.jpg" alt="user" />
 
           <div className="mid_user_info">
-            <h3>Maria Nelson</h3>
+            <h3>{friendsDetails?.name}</h3>
             <p>Grateful for every sunrise and sunset</p>
           </div>
         </div>

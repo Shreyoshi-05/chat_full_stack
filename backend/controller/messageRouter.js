@@ -1,6 +1,7 @@
 import { ress } from "./error.js";
 import { message } from "../table/messagesTable.js";
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
+import { User } from "../table/userTable.js";
 
 export const storeMessage = async (req, res) => {
   try {
@@ -125,3 +126,29 @@ export const longPollMessage = async (req, res) => {
     return ress(req, res, 500, error.message, false, null);
   }
 };
+
+export const getFriendsDetails = async(req,res) => {
+  try {
+    const {friendsId} = req.params;
+
+    const frDet = await User.findByPk(friendsId);
+
+    return ress(req, res, 200, "friends details got", true, frDet);
+
+  } catch (error) {
+    return ress(req, res, 500, error.message, false, null);
+  }
+}
+
+export const getUserDeatils = async(req, res) => {
+  try {
+    const {userId} = req.params;
+
+    const userDeatils = await User.findByPk(userId);
+
+    return ress(req, res, 200, "user details", true, userDeatils);
+
+  } catch (error) {
+    return ress(req, res, 500, error.message, false, null);
+  }
+}
