@@ -36,16 +36,15 @@ const MidHome = ({ userId, friendsId }) => {
   async function getAllChats(userId, friendsId) {
     try {
       console.log("REQUESTING CHATS:");
-    console.log("userId =", userId);
-    console.log("friendsId =", friendsId);
-
+      console.log("userId =", userId);
+      console.log("friendsId =", friendsId);
 
       const ans = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/chats/${userId}/${friendsId}`,
       );
       const data = await ans.json();
       console.log("CHAT API:", data);
-      
+
       setChats(data.data);
     } catch (error) {
       console.log(error.message);
@@ -79,6 +78,13 @@ const MidHome = ({ userId, friendsId }) => {
 
     getAllChats(userId, friendsId);
     getFriendsDeatils(friendsId);
+
+    if (ws.current?.connected) {
+      ws.current.emit("join_room", {
+        userId,
+        friendsId,
+      });
+    }
   }, [userId, friendsId]);
 
   useEffect(() => {
@@ -91,6 +97,15 @@ const MidHome = ({ userId, friendsId }) => {
     socket.on("connect", () => {
       console.log("Socket.IO connected");
       socket.emit("register", userId);
+
+      if (friendsIdRef.current) {
+        socket.emit("join_room", {
+          userId: userId,
+          friendsId: friendsIdRef.current,
+        });
+
+        console.log("JOIN ROOM:", userId, friendsIdRef.current);
+      }
     });
 
     socket.on("receiveMessage", (newMessage) => {
@@ -159,18 +174,18 @@ const MidHome = ({ userId, friendsId }) => {
 
       {/* ===== MIDDLE CHAT AREA ===== */}
       <div className="mid_messages">
-          {chats.map((message) => (
-            <div key={message.id} className={`message_row ${message.type}`}>
-              <div className="message_bubble">
-                <p>{message.message}</p>
+        {chats.map((message) => (
+          <div key={message.id} className={`message_row ${message.type}`}>
+            <div className="message_bubble">
+              <p>{message.message}</p>
 
-                <span className="message_time">
-                  {getTime(message.time || message.createdAt)}
-                </span>
-              </div>
+              <span className="message_time">
+                {getTime(message.time || message.createdAt)}
+              </span>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
       {/* ===== BOTTOM INPUT ===== */}
       <div className="mid_bottom">
