@@ -133,7 +133,7 @@
   display: flex;
   flex-direction: column;
 
-  gap: 10px;
+  gap: 20px;
 }
 
 
@@ -385,29 +385,6 @@
   }
 
 }
-
-/* =========================
-   MESSAGE AREA
-========================= */
-
-.mid_messages {
-  width: 100%;
-
-  flex: 1;
-
-  padding:12px 20px;
-
-  display: flex;
-  flex-direction: column;
-
-  gap: 12px;
-
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-
-/* EACH MESSAGE ROW */
 
 .message_row {
   width: 100%;

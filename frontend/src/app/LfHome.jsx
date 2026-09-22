@@ -61,7 +61,7 @@ const LfHome = ({userId,userDeatils,setFriendsId}) => {
 
   
 
-  console.log(userDeatils)
+  // console.log(userDeatils)
 
   useEffect(() => {
     getAllUser(userId);

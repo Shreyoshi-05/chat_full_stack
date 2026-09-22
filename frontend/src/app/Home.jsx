@@ -16,7 +16,7 @@ const Home = () => {
     try {
       const app = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/details/${uid}`);
       const data = await app.json();
-      console.log(data);
+      // console.log(data);
       setUserDeatalis(data.data);
 
     } catch (error) {

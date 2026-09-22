@@ -35,6 +35,7 @@ export const storeMessage = async (req, res) => {
 export const allChats = async (req, res) => {
   try {
     const { userId, friendsId } = req.params;
+    
     const chats = await message.findAll({
       where: {
         [Op.or]: [
