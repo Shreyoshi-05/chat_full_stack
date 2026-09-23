@@ -3,7 +3,7 @@ import { message } from "../../table/messagesTable.js";
 
 export function socketMessageHandler(io,socket){
   socket.on("sendMessage", async (data) => {
-      console.log("message received:", data);
+      // console.log("message received:", data);
   
       try {
         const newMessage = await message.create({

@@ -14,9 +14,13 @@ const MidHome = ({ userId, friendsId }) => {
   const friendsIdRef = useRef(friendsId);
 
   async function handelSend() {
+    if(!text.trim() || !userId || !friendsId) return;
+
+    const roomId = [Number(userId),Number(friendsId)].sort((a,b) => a-b).join("_");
+
     try {
       const obj = {
-        type: "message",
+        roomId,
         senderId: userId,
         receiverId: friendsId,
         text,
@@ -64,7 +68,7 @@ const MidHome = ({ userId, friendsId }) => {
     }
   }
 
-  console.log(chats);
+  // console.log(chats);
 
   useEffect(() => {
     friendsIdRef.current = friendsId;
@@ -104,7 +108,7 @@ const MidHome = ({ userId, friendsId }) => {
           friendsId: friendsIdRef.current,
         });
 
-        console.log("JOIN ROOM:", userId, friendsIdRef.current);
+        // console.log("JOIN ROOM:", userId, friendsIdRef.current);
       }
     });
 

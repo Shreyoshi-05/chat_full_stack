@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../css/left.css";
 import { useEffect } from "react";
+import { RiSearchAi2Line } from "react-icons/ri";
 
 const users = [
   {
@@ -44,6 +45,7 @@ const users = [
 const LfHome = ({userId,userDeatils,setFriendsId}) => {
   const [search, setSearch] = useState("");
   const [allusers, setAllUsers] = useState([]);
+  const [email, setEmail] = useState("");
   
 
 
@@ -59,9 +61,17 @@ const LfHome = ({userId,userDeatils,setFriendsId}) => {
     }
   }
 
-  
+  async function handelSearch(){
+    try {
+      console.log(email);
+      const ans = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/findByemail?email=${email}`)
+      const data = await ans.json();
+      setFriendsId(data?.data?.id);
 
-  // console.log(userDeatils)
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   useEffect(() => {
     getAllUser(userId);
@@ -88,17 +98,17 @@ const LfHome = ({userId,userDeatils,setFriendsId}) => {
       {/* SEARCH */}
       <div className="search_section">
         <div className="search_box">
-          <span className="search_icon">⌕</span>
+          {/* <span className="search_icon"></span> */}
 
           <input
             type="text"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search user by email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
-        <button className="add_chat">+</button>
+        <button className="add_chat" onClick={handelSearch}><RiSearchAi2Line /></button>
       </div>
 
       {/* CHAT USERS */}

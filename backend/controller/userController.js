@@ -106,3 +106,19 @@ export const getAllUsers = async (req, res) => {
     return ress(req, res, 500, error.message, false, null);
   }
 };
+
+export const getUserIdByEmail = async (req,res) => {
+  try {
+    const {email} = req.query;
+    const user = await User.findOne({where:{email}});
+
+    if(!user){
+      return ress(req, res, 400, "user with that email does't exists", false, null);
+    }
+    return ress(req, res, 200, "user found", false, user);
+
+  } catch (error) {
+    return ress(req, res, 500, error.message, false, null);
+
+  }
+}
