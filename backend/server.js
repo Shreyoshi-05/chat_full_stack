@@ -7,6 +7,11 @@ import { message } from "./table/messagesTable.js";
 import { messageRouter } from "./router/messageRouter.js";
 import { createServer } from "http";
 import { socketServer } from "./socket_io/index.js";
+import { groupRouter } from "./router/groupRoute.js";
+import { Group } from "./table/group.js";
+import { GroupMember } from "./table/groupMem.js";
+import { groupMessage } from "./table/groupMessage.js";
+import "./table/association.js"
 
 const app = express();
 
@@ -16,6 +21,7 @@ app.use(cors());
 
 app.use(userRouter);
 app.use(messageRouter);
+app.use(groupRouter);
 
 
 

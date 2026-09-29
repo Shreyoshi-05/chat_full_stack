@@ -4,20 +4,31 @@ import { messages } from "../assets/message";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { io } from "socket.io-client";
+import { Get } from "../assets/Get";
 
-const MidHome = ({ userId, friendsId }) => {
+const MidHome = ({ userId, friendsId, groupId }) => {
   const [text, setText] = useState("");
   const [chats, setChats] = useState([]);
   const [friendsDetails, setFriendsDetails] = useState();
+  const [groupname, setGroupname] = useState();
+  const [groupMessage, setGroupMessage] = useState([]);
 
   const ws = useRef(null);
   const friendsIdRef = useRef(friendsId);
+  const groupRef = useRef(groupId);
+  
+
+  useEffect(() => {
+    groupRef.current = groupId;
+  }, [groupId]);
+
 
   async function handelSend() {
-    if(!text.trim() || !userId || !friendsId) return;
+    if (!text.trim() || !userId || !friendsId) return;
 
-    const roomId = [Number(userId),Number(friendsId)].sort((a,b) => a-b).join("_");
-
+    const roomId = [Number(userId), Number(friendsId)]
+      .sort((a, b) => a - b)
+      .join("_");
     try {
       const obj = {
         roomId,
@@ -27,7 +38,6 @@ const MidHome = ({ userId, friendsId }) => {
       };
 
       console.log("SENDING:", obj);
-
       // ws.current.send(JSON.stringify(obj));
       ws.current.emit("sendMessage", obj);
 
@@ -38,37 +48,51 @@ const MidHome = ({ userId, friendsId }) => {
   }
 
   async function getAllChats(userId, friendsId) {
-    try {
-      console.log("REQUESTING CHATS:");
-      console.log("userId =", userId);
-      console.log("friendsId =", friendsId);
-
-      const ans = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/chats/${userId}/${friendsId}`,
-      );
-      const data = await ans.json();
-      console.log("CHAT API:", data);
-
-      setChats(data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
+    const ans = await Get(
+      `${import.meta.env.VITE_BACKEND_URL}/chats/${userId}/${friendsId}`,
+    );
+    setChats(ans);
   }
 
   async function getFriendsDeatils(fId) {
-    try {
-      const ans = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/details/${fId}`,
-      );
-      const data = await ans.json();
-      // console.log(data.data);
-      setFriendsDetails(data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
+    const ans = await Get(`${import.meta.env.VITE_BACKEND_URL}/details/${fId}`);
+    setFriendsDetails(ans);
   }
 
-  // console.log(chats);
+  async function getAllGroupData(id) {
+    const ans = await Get(
+      `${import.meta.env.VITE_BACKEND_URL}/show/groups/messages/${id}`,
+    );
+    console.log(ans);
+    setGroupMessage(Array.isArray(ans)?ans:[]);
+  }
+
+  async function getGroupName(groupId) {
+    const ans = await Get(
+      `${import.meta.env.VITE_BACKEND_URL}/get/group/name/${groupId}`,
+    );
+    setGroupname(ans);
+  }
+
+  async function sendGroupMessages() {
+    const message = text.trim();
+
+    if (!message || !userId || !groupId) return;
+
+    ws.current.emit("sendGroupMessage", {
+      groupId,
+      senderId: userId,
+      text: message,
+    });
+    setText("");
+  }
+
+  useEffect(() => {
+    if (!groupId) return;
+
+    getGroupName(groupId);
+    getAllGroupData(groupId);
+  }, [groupId]);
 
   useEffect(() => {
     friendsIdRef.current = friendsId;
@@ -107,8 +131,13 @@ const MidHome = ({ userId, friendsId }) => {
           userId: userId,
           friendsId: friendsIdRef.current,
         });
+      }
 
-        // console.log("JOIN ROOM:", userId, friendsIdRef.current);
+      if (groupRef.current) {
+        socket.emit("join_group", {
+          groupId: groupRef.current,
+          userId,
+        });
       }
     });
 
@@ -136,6 +165,12 @@ const MidHome = ({ userId, friendsId }) => {
       setChats((previousChats) => [...previousChats, chat]);
     });
 
+    socket.on("receiveGroupMessage", (newMessage) => {
+      if (Number(newMessage.groupId) !== Number(groupRef.current)) return;
+
+      setGroupMessage((previous) => [...previous, newMessage]);
+    });
+
     socket.on("disconnect", () => {
       console.log("Socket.IO disconnected");
     });
@@ -144,6 +179,12 @@ const MidHome = ({ userId, friendsId }) => {
       socket.disconnect();
     };
   }, [userId]);
+
+  useEffect(() => {
+    if (!groupId || !userId || !ws.current?.connected) return;
+
+    ws.current.emit("join_group", { groupId, userId });
+  }, [groupId, userId]);
 
   function getTime(time) {
     if (!time) return;
@@ -155,6 +196,7 @@ const MidHome = ({ userId, friendsId }) => {
     });
     return tt;
   }
+  // console.log(groupMessage);
 
   return (
     <div className="mid_home">
@@ -164,7 +206,7 @@ const MidHome = ({ userId, friendsId }) => {
           <img src="/dp3.jpg" alt="user" />
 
           <div className="mid_user_info">
-            <h3>{friendsDetails?.name}</h3>
+            <h3>{friendsDetails?.name || groupname?.name}</h3>
             <p>Grateful for every sunrise and sunset</p>
           </div>
         </div>
@@ -178,10 +220,10 @@ const MidHome = ({ userId, friendsId }) => {
 
       {/* ===== MIDDLE CHAT AREA ===== */}
       <div className="mid_messages">
-        {chats.map((message) => (
-          <div key={message.id} className={`message_row ${message.type}`}>
+        {(groupId ? groupMessage : chats).map((message) => (
+          <div key={message.id} className={`message_row ${Number(message.senderId) === Number(userId) ? "sent" : "received"}`}>
             <div className="message_bubble">
-              <p>{message.message}</p>
+              <p>{message.message||message.text}</p>
 
               <span className="message_time">
                 {getTime(message.time || message.createdAt)}
@@ -211,7 +253,10 @@ const MidHome = ({ userId, friendsId }) => {
           <button className="emoji_btn">😊</button>
         </div>
 
-        <button onClick={handelSend} className="send_btn">
+        <button
+          onClick={groupId ? sendGroupMessages : handelSend}
+          className="send_btn"
+        >
           ➤
         </button>
       </div>

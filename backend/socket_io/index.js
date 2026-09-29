@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import { socketMessageHandler } from "./handlers/chat.js";
 import { personalHendler } from "./handlers/personalChat.js";
+import { groupHendler } from "./handlers/groupHendler.js";
 
 export function socketServer(server) {
   const io = new Server(server);
@@ -13,6 +14,7 @@ export function socketServer(server) {
 
     // socketMessageHandler(io,socket);
     personalHendler(io , socket);
+    groupHendler(io,socket);
 
     socket.on("disconnect", () => {
       console.log("socket.io disconnected");

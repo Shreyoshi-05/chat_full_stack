@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../css/signin.css";
 import toast, { Toaster } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { post } from "../assets/Get";
 
 const Signin = () => {
   const [signUpinput, setSignupInput] = useState({
@@ -19,57 +20,36 @@ const Signin = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    try {
-      const ans = await fetch("http://localhost:3003/user/signup", {
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(signUpinput),
-      });
-
-      const data = await ans.json();
-      return toast.success(data.message);
+    const ans = await post("http://localhost:3003/user/signup", signUpinput);
+      return toast.success(ans.message);
       setSignupInput(() => ({
         name: "",
         phone: "",
         email: "",
         pass: "",
       }));
-    } catch (error) {
-      return toast.error(error.message);
-    }
   };
 
   const handleSignin = async (e) => {
     e.preventDefault();
-    try {
-      const ans = await fetch("http://localhost:3003/user/signin", {
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(signinInput),
-      });
+    const ans = await post("http://localhost:3003/user/signin", signinInput);
 
-      const data = await ans.json();
+    if (ans.success) {
+      toast.success(ans.message);
+    } else {
+      toast.error(ans.message);
+    }
 
-      if(data.success){
-        toast.success(data.message);
-      }else{
-        toast.error(data.message);
-      }
-      
-      localStorage.setItem("chatuser", JSON.stringify(data));
-      console.log(data);
+    localStorage.setItem("chatuser", JSON.stringify(ans));
+    console.log(ans);
 
-      setSigninInput(() => ({
-        email: "",
-        pass: "",
-      }));
-      
-      if(data.success){
-        nav("/home");
-      }
+    setSigninInput(() => ({
+      email: "",
+      pass: "",
+    }));
 
-    } catch (error) {
-      return toast.error(error.message);
+    if (ans.success) {
+      nav("/home");
     }
   };
 

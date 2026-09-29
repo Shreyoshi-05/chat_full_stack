@@ -20,7 +20,7 @@ export const signUpController = async (req, res) => {
     }
 
     const user = await User.findOne({ where: { email } });
-    if (!user) {
+    if (user) {
       return ress(req, res, 404, "User already exists", false, null);
     }
 
@@ -119,6 +119,16 @@ export const getUserIdByEmail = async (req,res) => {
 
   } catch (error) {
     return ress(req, res, 500, error.message, false, null);
+  }
+}
 
+export const getUserForGroups = async(req,res) => {
+  try {
+    const all = await User.findAll({attribute:["id","name","description","profileImage"]});
+
+    return ress(req, res, 200, "all users", true, all);
+
+  } catch (error) {
+    return ress(req, res, 500, error.message, false, null);
   }
 }

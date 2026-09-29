@@ -2,81 +2,55 @@ import React, { useState } from "react";
 import "../css/left.css";
 import { useEffect } from "react";
 import { RiSearchAi2Line } from "react-icons/ri";
+import { IoSettingsOutline } from "react-icons/io5";
+import { LuSettings } from "react-icons/lu";
+import { Link } from "react-router-dom";
+import { MdGroupAdd } from "react-icons/md";
+import { CiUser } from "react-icons/ci";
+import { LuLogOut } from "react-icons/lu";
+import { AiFillSmile } from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
+import { Get } from "../assets/Get";
 
-const users = [
-  {
-    id: 1,
-    name: "Maria Nelson",
-    message: "looks good",
-    image: "/dp3.jpg",
-  },
-  {
-    id: 2,
-    name: "Ashley Harris",
-    message: "lucky you",
-    image: "/dp3.jpg",
-  },
-  {
-    id: 3,
-    name: "Andrew Wilson",
-    message: "same here.",
-    image: "/dp3.jpg",
-  },
-  {
-    id: 4,
-    name: "Jennifer Brown",
-    message: "wait a second",
-    image: "/dp3.jpg",
-  },
-  {
-    id: 5,
-    name: "Edward Davis",
-    message: "how's it going?",
-    image: "/dp3.jpg",
-  },
-  {
-    id: 6,
-    name: "Karen Wilson",
-    message: "i hear you",
-    image: "/dp3.jpg",
-  },
-];
 
-const LfHome = ({userId,userDeatils,setFriendsId}) => {
+const LfHome = ({ userId, userDeatils, setFriendsId ,setProfile,profile,setAdd,setGropid}) => {
   const [search, setSearch] = useState("");
   const [allusers, setAllUsers] = useState([]);
   const [email, setEmail] = useState("");
-  
-
+  const [group, setGroup] = useState([]);
 
   async function getAllUser(userId) {
-    // console.log(userId);
-    try {
-      const ans = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/all/${userId}`);
-      const data = await ans.json();
-      // console.log(data.data);
-      setAllUsers(data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
+    const ans =await Get(`${import.meta.env.VITE_BACKEND_URL}/user/all/${userId}`);
+    // console.log(ans);
+    setAllUsers(ans);
   }
 
-  async function handelSearch(){
-    try {
-      console.log(email);
-      const ans = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/findByemail?email=${email}`)
-      const data = await ans.json();
-      setFriendsId(data?.data?.id);
+  async function handelSearch() {
+    const ans = await Get(`${import.meta.env.VITE_BACKEND_URL}/user/findByemail?email=${email}`);
+    setFriendsId(ans?.id);
+  }
 
-    } catch (error) {
-      console.log(error.message);
-    }
+  async function getGroupname() {
+    const ans = await Get(`${import.meta.env.VITE_BACKEND_URL}/get/groups`);
+    // console.log(ans);
+    setGroup(ans);
+  }
+
+  async function getAllChats(id) {
+    setGropid(id);
+    const ans = await Get(`${import.meta.env.VITE_BACKEND_URL}/show/groups/messages/${id}`);
+    console.log(ans);
   }
 
   useEffect(() => {
+    // if(!userId) return;
     getAllUser(userId);
+    getGroupname();
   }, []);
 
+  // console.log(allusers);
+
+  if(!allusers.length)return;
 
   return (
     <div className="left_home">
@@ -89,9 +63,28 @@ const LfHome = ({userId,userDeatils,setFriendsId}) => {
         </div>
 
         <div className="header_actions">
-          <button>•••</button>
-          <button>▣</button>
-          <button>✎</button>
+          <div className="dropdown dropdown-bottom dropdown-end">
+            <div tabIndex={0} role="button" className=" m-1">
+              <IoSettingsOutline size={20} />
+            </div>
+            <ul
+              tabIndex={-1}
+              className="dropdown-content menu bg-base-100 rounded-box z-1 w-32 p-2 shadow-sm"
+            >
+              <li style={{ padding: "0.3rem 0.8rem" }} onClick={() => setAdd(true)}>
+                <a style={{ fontSize: "0.6rem" }}> <MdGroupAdd /> Add Group</a>
+              </li>
+              <li style={{ padding: "0.3rem 0.8rem" }} onClick={()=>setProfile(true)}>
+                <a style={{ fontSize: "0.6rem" }}><AiFillSmile /> Profile</a>
+              </li>
+              <li style={{ padding: "0.3rem 0.8rem" }}>
+                <Link to={"/"} style={{ fontSize: "0.6rem" }}>
+                <LuLogOut />
+                  Log Out
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -108,7 +101,9 @@ const LfHome = ({userId,userDeatils,setFriendsId}) => {
           />
         </div>
 
-        <button className="add_chat" onClick={handelSearch}><RiSearchAi2Line /></button>
+        <button className="add_chat" onClick={handelSearch}>
+          <RiSearchAi2Line />
+        </button>
       </div>
 
       {/* CHAT USERS */}
@@ -128,8 +123,23 @@ const LfHome = ({userId,userDeatils,setFriendsId}) => {
             </div>
           </div>
         ))}
-      </div>
+        {group.map((user) => (
+          <div
+            className="chat_user"
+            key={user.id}
+            onClick={() => getAllChats(user.id)}
+          >
+            <img src={"/dp3.jpg"} alt={user.name} className="chat_avatar" />
 
+            <div className="chat_user_info">
+              <h4>{user.name}</h4>
+
+              <p>{user.chats}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      
     </div>
   );
 };
