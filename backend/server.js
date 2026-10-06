@@ -12,6 +12,7 @@ import { Group } from "./table/group.js";
 import { GroupMember } from "./table/groupMem.js";
 import { groupMessage } from "./table/groupMessage.js";
 import "./table/association.js"
+import { mediaRouter } from "./router/mediaRouter.js";
 
 const app = express();
 
@@ -22,18 +23,27 @@ app.use(cors());
 app.use(userRouter);
 app.use(messageRouter);
 app.use(groupRouter);
+app.use(mediaRouter)
 
 
 
 const server = createServer(app);
-socketServer(server);
+const io = socketServer(server);
+app.set("io",io);
 
 
 
 const port = 3003;
 
+console.log("Database:", db.getDatabaseName());
+console.log("Group table:", groupMessage.getTableName());
+console.log(
+  "Group model fields:",
+  Object.keys(groupMessage.rawAttributes)
+);
+
 // db.sync({ alter: true }).then(()=>{
-db.sync()
+db.sync({ alter: true, logging: console.log })
   .then(() => {
     server.listen(port, () => {
       console.log("server is running on port", port);

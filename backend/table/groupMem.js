@@ -8,11 +8,11 @@ export const GroupMember = db.define("GroupMember", {
     autoIncrement: true,
   },
   groupId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   userId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   }
 });

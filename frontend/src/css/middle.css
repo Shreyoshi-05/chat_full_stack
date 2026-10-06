@@ -539,3 +539,40 @@
     font-size: 12px;
   }
 }
+
+
+
+.attachment_picker {
+  position: relative;
+}
+
+.attachment_menu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  z-index: 10;
+  width: 180px;
+  padding: 8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px #0002;
+}
+
+.attachment_menu button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: #222;
+  text-align: left;
+  cursor: pointer;
+}
+
+.selected_file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}

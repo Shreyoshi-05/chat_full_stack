@@ -1,4 +1,4 @@
-import {  DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 import { db } from "../db/db.js";
 
 export const groupMessage = db.define("groupMessage", {
@@ -8,15 +8,31 @@ export const groupMessage = db.define("groupMessage", {
     autoIncrement: true,
   },
   groupId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   senderId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  text: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  text:{
-    type:DataTypes.STRING,
-    allowNull:false
-  }
+  filePath: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  fileName: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  fileType: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  fileSize: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 });

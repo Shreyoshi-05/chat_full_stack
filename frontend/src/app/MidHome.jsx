@@ -4,7 +4,7 @@ import { messages } from "../assets/message";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { io } from "socket.io-client";
-import { Get } from "../assets/Get";
+import { Get, post } from "../assets/Get";
 
 const MidHome = ({ userId, friendsId, groupId }) => {
   const [text, setText] = useState("");
@@ -13,15 +13,74 @@ const MidHome = ({ userId, friendsId, groupId }) => {
   const [groupname, setGroupname] = useState();
   const [groupMessage, setGroupMessage] = useState([]);
 
+  const [showAttachments, setShowAttachments] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const mediaInputRef = useRef(null);
+  const documentInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+
+  function handleFileSelect(e) {
+    const file = e.target.files?.[0];
+    // console.log(file);
+    if (file) setSelectedFile(file);
+
+    setShowAttachments(false);
+    e.target.value = ""; // Allows selecting the same file again.
+  }
+
+  async function uploadMedia() {
+    if (!selectedFile || !userId || (!groupId && !friendsId)) return;
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("senderId", userId);
+    if (groupId) {
+      formData.append("groupId", groupId);
+    } else {
+      formData.append("receiverId", friendsId);
+    }
+
+    setUploading(true);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/media/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+      const ans = await response.json();
+      console.log(ans);
+
+      if (!response.ok || !ans.success) {
+        throw new Error(ans.message || "Upload failed");
+      }
+
+      const newMessage = ans.data;
+
+      if (groupId) {
+        setGroupMessage((pre) => [...pre, newMessage]);
+      } else {
+        setChats((pre) => [...pre, newMessage]);
+      }
+
+      setSelectedFile(null);
+      setText("");
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
   const ws = useRef(null);
   const friendsIdRef = useRef(friendsId);
   const groupRef = useRef(groupId);
-  
 
   useEffect(() => {
     groupRef.current = groupId;
   }, [groupId]);
-
 
   async function handelSend() {
     if (!text.trim() || !userId || !friendsId) return;
@@ -64,7 +123,7 @@ const MidHome = ({ userId, friendsId, groupId }) => {
       `${import.meta.env.VITE_BACKEND_URL}/show/groups/messages/${id}`,
     );
     console.log(ans);
-    setGroupMessage(Array.isArray(ans)?ans:[]);
+    setGroupMessage(Array.isArray(ans) ? ans : []);
   }
 
   async function getGroupName(groupId) {
@@ -162,7 +221,12 @@ const MidHome = ({ userId, friendsId, groupId }) => {
         type: senderId === myId ? "sent" : "received",
       };
 
-      setChats((previousChats) => [...previousChats, chat]);
+      // setChats((previousChats) => [...previousChats, chat]);
+      setChats((previous) =>
+        previous.some((item) => Number(item.id) === Number(newMessage.id))
+          ? previous
+          : [...previous, newMessage],
+      );
     });
 
     socket.on("receiveGroupMessage", (newMessage) => {
@@ -196,7 +260,6 @@ const MidHome = ({ userId, friendsId, groupId }) => {
     });
     return tt;
   }
-  // console.log(groupMessage);
 
   return (
     <div className="mid_home">
@@ -221,9 +284,36 @@ const MidHome = ({ userId, friendsId, groupId }) => {
       {/* ===== MIDDLE CHAT AREA ===== */}
       <div className="mid_messages">
         {(groupId ? groupMessage : chats).map((message) => (
-          <div key={message.id} className={`message_row ${Number(message.senderId) === Number(userId) ? "sent" : "received"}`}>
+          <div
+            key={message.id}
+            className={`message_row ${Number(message.senderId) === Number(userId) ? "sent" : "received"}`}
+          >
             <div className="message_bubble">
-              <p>{message.message||message.text}</p>
+              {message.fileUrl &&
+                (message.fileType?.startsWith("image/") ? (
+                  <img
+                    src={message.fileUrl}
+                    alt={message.fileName || "Attachment"}
+                    style={{
+                      maxWidth: "240px",
+                      maxHeight: "300px",
+                      borderRadius: "10px",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <a
+                    href={message.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    📎 {message.fileName || "Open attachment"}
+                  </a>
+                ))}
+
+              {(message.message || message.text) && (
+                <p>{message.message || message.text}</p>
+              )}
 
               <span className="message_time">
                 {getTime(message.time || message.createdAt)}
@@ -234,11 +324,57 @@ const MidHome = ({ userId, friendsId, groupId }) => {
       </div>
 
       {/* ===== BOTTOM INPUT ===== */}
+      {selectedFile && (
+        <div className="selected_file">
+          <span>📎 {selectedFile.name}</span>
+
+          <button type="button" onClick={() => setSelectedFile(null)}>
+            ✕
+          </button>
+        </div>
+      )}
       <div className="mid_bottom">
-        <div className="bottom_icons">
-          <button>🖼</button>
-          <button>📷</button>
-          <button>🎤</button>
+        {/* <input type="file" onChange={handelChangeFile}/> */}
+        <div className="attachment_picker">
+          <button
+            type="button"
+            onClick={() => setShowAttachments((previous) => !previous)}
+          >
+            📎
+          </button>
+
+          {showAttachments && (
+            <div className="attachment_menu">
+              <button
+                type="button"
+                onClick={() => mediaInputRef.current?.click()}
+              >
+                🖼 Photos & Videos
+              </button>
+
+              <button
+                type="button"
+                onClick={() => documentInputRef.current?.click()}
+              >
+                📄 Documents
+              </button>
+            </div>
+          )}
+
+          <input
+            ref={mediaInputRef}
+            type="file"
+            accept="image/*,video/*"
+            hidden
+            onChange={handleFileSelect}
+          />
+
+          <input
+            ref={documentInputRef}
+            type="file"
+            hidden
+            onChange={handleFileSelect}
+          />
         </div>
 
         <div className="message_input">
@@ -253,11 +389,24 @@ const MidHome = ({ userId, friendsId, groupId }) => {
           <button className="emoji_btn">😊</button>
         </div>
 
-        <button
+        {/* <button
           onClick={groupId ? sendGroupMessages : handelSend}
           className="send_btn"
         >
           ➤
+        </button> */}
+        <button
+          onClick={
+            selectedFile
+              ? uploadMedia
+              : groupId
+                ? sendGroupMessages
+                : handelSend
+          }
+          disabled={uploading}
+          className="send_btn"
+        >
+          {uploading ? "Uploading…" : "➤"}
         </button>
       </div>
     </div>

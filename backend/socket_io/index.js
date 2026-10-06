@@ -20,4 +20,6 @@ export function socketServer(server) {
       console.log("socket.io disconnected");
     });
   });
+
+  return io;
 }
