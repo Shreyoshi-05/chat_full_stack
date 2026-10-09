@@ -13,6 +13,8 @@ import { GroupMember } from "./table/groupMem.js";
 import { groupMessage } from "./table/groupMessage.js";
 import "./table/association.js"
 import { mediaRouter } from "./router/mediaRouter.js";
+import {ArchivedChat}  from "./table/ArchivedChat.js"
+import { ArchiveJob } from "./jobstoDone/archiveMessages.js";
 
 const app = express();
 
@@ -45,6 +47,8 @@ console.log(
 // db.sync({ alter: true }).then(()=>{
 db.sync({ alter: true, logging: console.log })
   .then(() => {
+    ArchiveJob.start();
+    
     server.listen(port, () => {
       console.log("server is running on port", port);
     });
