@@ -37,18 +37,18 @@ app.set("io",io);
 
 const port = 3003;
 
-console.log("Database:", db.getDatabaseName());
-console.log("Group table:", groupMessage.getTableName());
-console.log(
-  "Group model fields:",
-  Object.keys(groupMessage.rawAttributes)
-);
+// console.log("Database:", db.getDatabaseName());
+// console.log("Group table:", groupMessage.getTableName());
+// console.log(
+//   "Group model fields:",
+//   Object.keys(groupMessage.rawAttributes)
+// );
 
 // db.sync({ alter: true }).then(()=>{
 db.sync({ alter: true, logging: console.log })
   .then(() => {
     ArchiveJob.start();
-    
+
     server.listen(port, () => {
       console.log("server is running on port", port);
     });

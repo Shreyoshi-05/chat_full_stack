@@ -21,7 +21,7 @@ export const post = async(url,data) => {
       });
 
       const fans = await ans.json();
-      return fans;
+      return fans?.data;
 }
 
 // export default {Get,post}

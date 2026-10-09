@@ -5,6 +5,9 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import { io } from "socket.io-client";
 import { Get, post } from "../assets/Get";
+import { MdAutoFixHigh } from "react-icons/md";
+import { MdOutlineAutoAwesome } from "react-icons/md";
+import { FaMagic } from "react-icons/fa";
 
 const MidHome = ({ userId, friendsId, groupId }) => {
   const [text, setText] = useState("");
@@ -18,6 +21,7 @@ const MidHome = ({ userId, friendsId, groupId }) => {
   const mediaInputRef = useRef(null);
   const documentInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [gptAns, setGptAns] = useState([]);
 
   function handleFileSelect(e) {
     const file = e.target.files?.[0];
@@ -144,6 +148,36 @@ const MidHome = ({ userId, friendsId, groupId }) => {
       text: message,
     });
     setText("");
+  }
+
+  async function hendleGenerate(params) {
+    let mess = groupId ? groupMessage : chats;
+    let newMess = mess.slice(-5).map((mm) => {
+      return {
+        text: mm.message ?? mm.text ?? "",
+        type:
+          mm.type ??
+          (String(mm.senderId) === String(userId) ? "sent" : "received"),
+      };
+    });
+
+    // console.log(JSON.stringify(newMess));
+
+    try {
+      const ans = await post(
+        `${import.meta.env.VITE_BACKEND_URL}/generate/message`,
+        newMess,
+      );
+      // console.log(ans);
+
+      if (!Array.isArray(ans)) {
+        throw new Error("The backend did not return suggestions");
+      }
+
+      setGptAns(ans);
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   useEffect(() => {
@@ -378,6 +412,7 @@ const MidHome = ({ userId, friendsId, groupId }) => {
         </div>
 
         <div className="message_input">
+          <button className="emoji_btn">😊</button>
           <input
             type="text"
             required
@@ -386,7 +421,31 @@ const MidHome = ({ userId, friendsId, groupId }) => {
             onChange={(e) => setText(e.target.value)}
           />
 
-          <button className="emoji_btn">😊</button>
+          <div className="dropdown dropdown-top dropdown-end">
+            <button type="button" className="btn m-1" onClick={hendleGenerate}>
+              <FaMagic />
+            </button>
+            <ul
+              tabIndex={-1}
+              className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+            >
+              {gptAns.map((item) => {
+                return (
+                  <li style={{ padding: "0.3rem 0.8rem" }}>
+                    <a
+                      onClick={() => setText(item)}
+                      style={{ padding: "0.5rem 0.5rem" }}
+                    >
+                      {item}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* <button className="emoji_btn" onClick={hendleGenerate}><FaMagic /></button> */}
+          {/* <button className="emoji_btn"><MdAutoFixHigh /></button> */}
         </div>
 
         {/* <button
